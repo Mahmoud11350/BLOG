@@ -1,30 +1,50 @@
 const { Schema, model, Types } = require("mongoose");
 
-const articleSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
+const articleSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      minlength: [5, "article content can't be less than 150 characters"],
+    },
+    body: {
+      type: String,
+      required: true,
+      minlength: [5, "article content can't be less than 150 characters"],
+    },
+    image: {
+      type: String,
+    },
+    numOfComments: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    numOfFavourites: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    author: {
+      type: Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  content: {
-    type: String,
-    required: true,
-    minlength: [5, "article content can't be less than 150 characters"],
-  },
-  user: {
-    type: Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-});
-articleSchema.pre("save", function () {
-  console.log("new article save hook");
-});
-articleSchema.pre("findOneAndUpdate", function () {
-  console.log("user updated");
-});
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
 
-articleSchema.pre("findOneAndDelete", function () {
-  console.log("delete hook");
+articleSchema.pre("findOneAndDelete", async function () {
+  await this.model("Comment").deleteMany({ article: this._id });
+});
+articleSchema.virtual("comments", {
+  localField: "_id",
+  foreignField: "article",
+  ref: "Comment",
 });
 
 module.exports = model("Article", articleSchema);

@@ -57,8 +57,9 @@ userSchema.methods.toJSON = function () {
   return userObject;
 };
 
-userSchema.pre("deleteOne", { document: true }, function () {
-  console.log("user removed");
+userSchema.pre("deleteOne", { document: true }, async function () {
+  await this.model("Article").deleteMany({ author: this._id });
+  await this.model("Comment").deleteMany({ author: this._id });
 });
 
 module.exports = model("User", userSchema);
