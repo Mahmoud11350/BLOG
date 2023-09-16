@@ -11,6 +11,9 @@ const cookieParser = require("cookie-parser");
 const routeNotFound = require("./middlewares/notFound");
 const errorsHandler = require("./middlewares/errorsHandler");
 const authRouter = require("./routes/authRoutes");
+const userRouter = require("./routes/userRouter");
+const articlesRouter = require("./routes/articlesRoutes");
+const authanticatedUser = require("./middlewares/authMiddleware");
 
 // pre middleware
 app.use(express.json());
@@ -19,6 +22,8 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // routes
 app.use("/auth", authRouter);
+app.use("/user", authanticatedUser, userRouter);
+app.use("/articles", authanticatedUser, articlesRouter);
 
 // post middlewares
 app.use(routeNotFound);

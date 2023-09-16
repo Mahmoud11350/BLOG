@@ -15,6 +15,10 @@ const errorsHandler = (err, req, res, next) => {
     customError.errorMsg = "email already in use please login ";
     customError.status = StatusCodes.BAD_REQUEST;
   }
+  if (err && err.name === "CastError") {
+    customError.errorMsg = "please provide valid id";
+    customError.status = StatusCodes.BAD_REQUEST;
+  }
 
   return res.status(customError.status).json({ error: customError.errorMsg });
   return res.send(err);

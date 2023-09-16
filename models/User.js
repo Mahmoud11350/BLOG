@@ -43,6 +43,7 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   const genSalt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, genSalt);
 });
@@ -55,5 +56,9 @@ userSchema.methods.toJSON = function () {
   delete userObject.password;
   return userObject;
 };
+
+userSchema.pre("deleteOne", { document: true }, function () {
+  console.log("user removed");
+});
 
 module.exports = model("User", userSchema);
