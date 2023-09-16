@@ -3,6 +3,7 @@ const Article = require("../models/Article");
 const CUSTOMAPIERROR = require("../errors/customError");
 const checkPermission = require("../utils/checkPermissions");
 const cloudinary = require("cloudinary").v2;
+const Comment = require("../models/Comments");
 const createArticle = async (req, res) => {
   req.body.author = req.user.userId;
   let result;
@@ -84,6 +85,20 @@ const getUserArticles = async (req, res) => {
   res.status(StatusCodes.OK).json({ data: articles });
 };
 
+const getFavouriteArticles = async (req, res) => {
+  const favourites = await Comment.find({
+    author: req.user.userId,
+    isFavourite: true,
+  });
+
+  let favArticles = [];
+
+  favArticles = favourites.map(
+    async (fav) => await Article.findOne({ _id: fav.author })
+  );
+  console.log(favArticles);
+  res.send(favArticles);
+};
 // const uploadArticleImage = async (req, res) => {
 //   const image = req.files.image;
 //   const imagePath = image.tempFilePath;
@@ -105,5 +120,6 @@ module.exports = {
   updateArtacle,
   deleteArticle,
   getUserArticles,
+  getFavouriteArticles,
   // uploadArticleImage,
 };

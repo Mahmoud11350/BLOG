@@ -6,6 +6,7 @@ const {
   updateArtacle,
   deleteArticle,
   getUserArticles,
+  getFavouriteArticles,
   // uploadArticleImage,
 } = require("../controllers/articlesController");
 
@@ -22,5 +23,6 @@ articlesRoutes
 // articlesRoutes.post("/image", uploadArticleImage);
 
 articlesRoutes.get("/user/:id", getUserArticles);
+articlesRoutes.get("/favourites/articles", getFavouriteArticles);
 
 module.exports = articlesRoutes;
